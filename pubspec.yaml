@@ -1,0 +1,43 @@
+name: tumble_puzzle
+description: A normal slide puzzle, just like in reality the first thing you do is break the frame so that you can organize the blocks as you wish.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.15.1 <3.0.0"
+  flutter: ">=2.8.1"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^1.0.3
+  google_fonts: ^2.1.0
+  flame: ^1.0.0
+  flame_forge2d: ^0.8.3
+  collection: ^1.15.0
+
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flame_lint: 0.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/ember.png
+
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
