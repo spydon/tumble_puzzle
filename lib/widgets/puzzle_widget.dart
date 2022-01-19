@@ -1,0 +1,41 @@
+import 'package:flame/game.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../game/tumble_puzzle_game.dart';
+
+class PuzzleWidget extends ConsumerWidget {
+  final TumblePuzzleGame game;
+
+  const PuzzleWidget({
+    required this.game,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: GameWidget(game: game),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            child: Icon(Icons.free_breakfast_outlined),
+            onPressed: () {
+              //...
+            },
+            heroTag: null,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          FloatingActionButton(
+            child: Icon(Icons.restore_outlined),
+            onPressed: () => {},
+            heroTag: null,
+          )
+        ],
+      ),
+    );
+  }
+}

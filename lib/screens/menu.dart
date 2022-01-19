@@ -4,6 +4,7 @@ import 'package:flame/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tumble_puzzle/screens/home.dart';
+import 'package:tumble_puzzle/widgets/puzzle_widget.dart';
 
 import '../game/tumble_puzzle_game.dart';
 import '../widgets/tumble_card.dart';
@@ -39,7 +40,7 @@ class Menu extends ConsumerWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => GameWidget(game: TumblePuzzleGame()),
+                builder: (context) => PuzzleWidget(game: TumblePuzzleGame()),
               ),
             );
           },

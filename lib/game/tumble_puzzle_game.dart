@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:tumble_puzzle/game/timed_explosion.dart';
 
@@ -13,6 +14,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   final numberOfBoxesX = 4;
   final numberOfBoxesY = 4;
   final bool isCinematic;
+  late final Iterable<FrameBlock> _frameBlocks;
 
   TumblePuzzleGame({this.isCinematic = false, Vector2? gravity})
       : super(gravity: gravity);
@@ -29,9 +31,9 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     final puzzleStartPosition = center - startOffset;
     final boxes = generateBoxes(puzzleStartPosition).toList(growable: false);
     addAll(boxes);
-    addAll(generateFrame(center));
+    addAll(_frameBlocks = generateFrame(center));
     final explosions = List.generate(
-      3,
+      isCinematic ? 100 : 3,
       (i) => TimedExplosion((boxes..shuffle()).first, 3.0 + i),
     );
     addAll(explosions);
@@ -69,33 +71,42 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
 
   Iterable<FrameBlock> generateFrame(Vector2 center) {
     final halfFrameThickness = frameThickness / 2;
-    return [
+    final frameBlocks = [
       // Left frame part
       FrameBlock(
-        center - Vector2((numberOfBoxesY / 2) * boxLength, 0),
+        center -
+            Vector2(
+                (numberOfBoxesY / 2) * boxLength + halfFrameThickness + 0.1, 0),
         Vector2(frameThickness, numberOfBoxesY * boxLength),
+        isStatic: !isCinematic,
       ),
 
       // Right frame part
       FrameBlock(
-        center + Vector2((numberOfBoxesY / 2) * boxLength, 0),
+        center +
+            Vector2(
+                (numberOfBoxesY / 2) * boxLength + halfFrameThickness + 0.1, 0),
         Vector2(frameThickness, numberOfBoxesY * boxLength),
+        isStatic: !isCinematic,
       ),
 
       // Top frame part
       FrameBlock(
         center +
-            Vector2(0, boxLength * (numberOfBoxesX / 2) + halfFrameThickness),
+            Vector2(
+                0, boxLength * (numberOfBoxesX / 2) + halfFrameThickness + 0.1),
         Vector2(
           numberOfBoxesX * boxLength + 2 * frameThickness,
           frameThickness,
         ),
+        isStatic: !isCinematic,
       ),
 
       // Bottom frame part
       FrameBlock(
         center -
-            Vector2(0, boxLength * (numberOfBoxesX / 2) + halfFrameThickness),
+            Vector2(
+                0, boxLength * (numberOfBoxesX / 2) + halfFrameThickness + 0.1),
         Vector2(
           numberOfBoxesX * boxLength + 2 * frameThickness,
           frameThickness,
@@ -103,5 +114,6 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
         isStatic: true,
       ),
     ];
+    return frameBlocks;
   }
 }

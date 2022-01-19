@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tumble_puzzle/screens/home.dart';
+
+import '../screens/home.dart';
 
 class TumbleCard extends ConsumerWidget {
   final List<Widget> children;
