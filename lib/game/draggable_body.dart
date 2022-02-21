@@ -29,8 +29,11 @@ mixin DraggableBody on PositionBodyComponent {
       final pointB = (body.localPoint(mouseJoint!.anchorB)..y *= -1).toOffset();
       final waveLength = pointB - pointA;
       final diffLength = waveLength.distance;
-      final strokeWidth = positionComponent!.size.x - diffLength / 5;
-      rubberPaint.strokeWidth = min(max(0.3, strokeWidth), 2);
+      const maxStrokeWidth = 2.0;
+      const minStrokeWidth = 0.3;
+      final strokeWidth = maxStrokeWidth - diffLength / 20;
+      rubberPaint.strokeWidth =
+          strokeWidth.clamp(minStrokeWidth, maxStrokeWidth);
       final path = Path()..moveTo(pointA.dx, pointA.dy);
       final amplitude = Offset(
         waveLength.dx / 2 + min(10, diffLength / 2),

@@ -20,17 +20,18 @@ class PuzzleWidget extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
-            child: Icon(Icons.free_breakfast_outlined),
+            child: const Icon(Icons.free_breakfast_outlined),
             onPressed: () {
-              //...
+              final gravity = game.world.gravity;
+              gravity.y = gravity.isZero() ? -9.8 : 0;
             },
             heroTag: null,
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           FloatingActionButton(
-            child: Icon(Icons.restore_outlined),
+            child: const Icon(Icons.restore_outlined),
             onPressed: () => {},
             heroTag: null,
           )

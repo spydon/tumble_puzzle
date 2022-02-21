@@ -6,6 +6,13 @@ import 'package:flutter/material.dart';
 
 import 'draggable_body.dart';
 
+enum Direction {
+  north,
+  east,
+  south,
+  west,
+}
+
 class FrameBlock extends PositionBodyComponent
     with flame.Draggable, DraggableBody {
   final Vector2 startPosition;

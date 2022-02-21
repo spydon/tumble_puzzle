@@ -43,6 +43,7 @@ class NumberBlock extends PositionBodyComponent
       style: const TextStyle(
         color: Colors.black38,
         fontFamily: 'monospace',
+        height: 3.8,
         //letterSpacing: 2.0,
         fontSize: 4.0,
         //shadows: [
@@ -58,8 +59,8 @@ class NumberBlock extends PositionBodyComponent
           text: number.toString(),
           textRenderer: _textRenderer,
           anchor: Anchor.center,
-          size: size,
           position: size / 2,
+          priority: -1,
         ),
       );
   }

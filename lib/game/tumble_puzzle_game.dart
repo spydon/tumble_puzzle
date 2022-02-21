@@ -1,10 +1,9 @@
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
-import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
-import 'package:tumble_puzzle/game/timed_explosion.dart';
 
 import 'boundaries.dart';
+import 'event_ball.dart';
 import 'frame_block.dart';
 import 'number_block.dart';
 
@@ -14,7 +13,6 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   final numberOfBoxesX = 4;
   final numberOfBoxesY = 4;
   final bool isCinematic;
-  late final Iterable<FrameBlock> _frameBlocks;
 
   TumblePuzzleGame({this.isCinematic = false, Vector2? gravity})
       : super(gravity: gravity);
@@ -22,6 +20,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    addContactCallback(BallContact());
     final boundaries = createBoundaries(this);
     addAll(boundaries);
     final center = screenToWorld(camera.viewport.effectiveSize / 2);
@@ -31,18 +30,40 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     final puzzleStartPosition = center - startOffset;
     final boxes = generateBoxes(puzzleStartPosition).toList(growable: false);
     addAll(boxes);
-    addAll(_frameBlocks = generateFrame(center));
-    final explosions = List.generate(
-      isCinematic ? 100 : 3,
-      (i) => TimedExplosion((boxes..shuffle()).first, 3.0 + i),
+    addAll(generateFrame(center));
+
+    children.register<EventBall>();
+    children.register<FrameBlock>();
+    children.register<NumberBlock>();
+
+    final timer = TimerComponent(
+      period: 3,
+      repeat: true,
+      onTick: () {
+        if (children.query<EventBall>().length < 1) {
+          //add(
+          //  NumberBlock(5, center.clone()..y += size.y / 4),
+          //);
+          add(
+            EventBall(EventType.boxExplosion, center.clone()..y += size.y / 4),
+          );
+        }
+      },
     );
-    addAll(explosions);
+    add(timer);
   }
 
   @override
   void onDragStart(int pointerId, DragStartInfo info) {
     if (!isCinematic) {
       super.onDragStart(pointerId, info);
+    }
+  }
+
+  @override
+  void update(double dt) {
+    if (dt < 1) {
+      super.update(dt);
     }
   }
 
@@ -71,46 +92,41 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
 
   Iterable<FrameBlock> generateFrame(Vector2 center) {
     final halfFrameThickness = frameThickness / 2;
+    const wiggleRoom = 0.2;
+    final verticalSize =
+        Vector2(frameThickness, numberOfBoxesY * boxLength + 2 * wiggleRoom);
+    final horizontalLength = Vector2(
+      verticalSize.y + frameThickness * 2,
+      frameThickness,
+    );
+    final centerDistance =
+        boxLength * (numberOfBoxesX / 2) + halfFrameThickness + wiggleRoom;
     final frameBlocks = [
       // Left frame part
       FrameBlock(
-        center -
-            Vector2(
-                (numberOfBoxesY / 2) * boxLength + halfFrameThickness + 0.1, 0),
-        Vector2(frameThickness, numberOfBoxesY * boxLength),
-        isStatic: !isCinematic,
+        center + Vector2(-centerDistance, 0),
+        verticalSize,
+        isStatic: isCinematic,
       ),
 
       // Right frame part
       FrameBlock(
-        center +
-            Vector2(
-                (numberOfBoxesY / 2) * boxLength + halfFrameThickness + 0.1, 0),
-        Vector2(frameThickness, numberOfBoxesY * boxLength),
-        isStatic: !isCinematic,
+        center + Vector2(centerDistance, 0),
+        verticalSize,
+        isStatic: isCinematic,
       ),
 
       // Top frame part
       FrameBlock(
-        center +
-            Vector2(
-                0, boxLength * (numberOfBoxesX / 2) + halfFrameThickness + 0.1),
-        Vector2(
-          numberOfBoxesX * boxLength + 2 * frameThickness,
-          frameThickness,
-        ),
-        isStatic: !isCinematic,
+        center + Vector2(0, centerDistance),
+        horizontalLength,
+        isStatic: isCinematic,
       ),
 
       // Bottom frame part
       FrameBlock(
-        center -
-            Vector2(
-                0, boxLength * (numberOfBoxesX / 2) + halfFrameThickness + 0.1),
-        Vector2(
-          numberOfBoxesX * boxLength + 2 * frameThickness,
-          frameThickness,
-        ),
+        center + Vector2(0, -centerDistance),
+        horizontalLength,
         isStatic: true,
       ),
     ];
