@@ -43,7 +43,7 @@ class NumberBlock extends PositionBodyComponent
       style: const TextStyle(
         color: Colors.black38,
         fontFamily: 'monospace',
-        height: 3.8,
+        height: 3.50,
         //letterSpacing: 2.0,
         fontSize: 4.0,
         //shadows: [
@@ -52,7 +52,6 @@ class NumberBlock extends PositionBodyComponent
         //],
       ),
     );
-
     positionComponent = RectangleComponent.square(size: sideLength)
       ..add(
         TextComponent(
@@ -62,6 +61,15 @@ class NumberBlock extends PositionBodyComponent
           position: size / 2,
           priority: -1,
         ),
+      )
+      ..add(
+        RectangleComponent(
+          size: Vector2(sideLength / 2, sideLength / 20),
+          position: Vector2(sideLength / 2, sideLength * (3.8 / 5)),
+          anchor: Anchor.center,
+          paint: Paint()..color = Colors.black38,
+        ),
       );
+    //}
   }
 }

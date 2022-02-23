@@ -4,10 +4,15 @@ import 'package:flame/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../game/tumble_puzzle_game.dart';
-import '../widgets/puzzle_widget.dart';
 import '../widgets/tumble_card.dart';
-import 'home.dart';
+import 'state.dart';
+
+enum MenuItem {
+  menu,
+  highscore,
+  about,
+  gameover,
+}
 
 class Menu extends ConsumerWidget {
   final PageController controller;
@@ -37,18 +42,13 @@ class Menu extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PuzzleWidget(game: TumblePuzzleGame()),
-              ),
-            );
+            ref.read(gameNotifierProvider.notifier).setPlaying();
           },
           child: const Text('Play'),
         ),
         ElevatedButton(
           onPressed: () => controller.animateToPage(
-            menuItems['highscore']!,
+            MenuItem.highscore.index,
             curve: Curves.linear,
             duration: const Duration(seconds: 1),
           ),
@@ -56,7 +56,7 @@ class Menu extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: () => controller.animateToPage(
-            menuItems['about']!,
+            MenuItem.about.index,
             curve: Curves.linear,
             duration: const Duration(seconds: 1),
           ),

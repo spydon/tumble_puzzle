@@ -57,7 +57,6 @@ class BallContact extends ContactCallback<EventBall, PositionBodyComponent> {
   @override
   void begin(EventBall ball, PositionBodyComponent other, Contact contact) {
     final impulse = Vector2.random() - Vector2.random();
-    ball.body.applyLinearImpulse(impulse.clone()..scale(ball.body.mass * 50));
     other.body.applyLinearImpulse(
       impulse
         ..negate()

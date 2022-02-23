@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../screens/home.dart';
+import '../screens/menu.dart';
 
 class TumbleCard extends ConsumerWidget {
   final List<Widget> children;
@@ -22,7 +22,7 @@ class TumbleCard extends ConsumerWidget {
         ? (<Widget>[
             ElevatedButton(
               onPressed: () => controller.animateToPage(
-                menuItems['menu']!,
+                MenuItem.menu.index,
                 duration: const Duration(seconds: 1),
                 curve: Curves.linear,
               ),

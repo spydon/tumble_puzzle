@@ -2,7 +2,6 @@ import 'package:flame/components.dart';
 import 'package:flame/components.dart' as flame;
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame_forge2d/position_body_component.dart';
-import 'package:flutter/material.dart';
 
 import 'draggable_body.dart';
 
@@ -16,11 +15,13 @@ enum Direction {
 class FrameBlock extends PositionBodyComponent
     with flame.Draggable, DraggableBody {
   final Vector2 startPosition;
-  static final _paint = Paint()..color = Colors.blue;
   final bool isStatic;
 
-  FrameBlock(this.startPosition, Vector2 size, {this.isStatic = false})
-      : super(size: size);
+  FrameBlock(
+    this.startPosition,
+    Vector2 size, {
+    this.isStatic = false,
+  }) : super(size: size);
 
   @override
   Body createBody() {

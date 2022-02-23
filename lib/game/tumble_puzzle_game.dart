@@ -2,25 +2,32 @@ import 'package:flame/components.dart';
 import 'package:flame/input.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 
+import 'background.dart';
 import 'boundaries.dart';
 import 'event_ball.dart';
 import 'frame_block.dart';
 import 'number_block.dart';
 
 class TumblePuzzleGame extends Forge2DGame with HasDraggables {
+  final Function()? onFinish;
   final boxLength = 8.0;
   final frameThickness = 2.0;
   final numberOfBoxesX = 4;
   final numberOfBoxesY = 4;
   final bool isCinematic;
+  final bool isCelebration;
   late List<NumberBlock> boxes;
 
-  TumblePuzzleGame({this.isCinematic = false, Vector2? gravity})
-      : super(gravity: gravity);
+  TumblePuzzleGame({
+    this.isCinematic = false,
+    this.isCelebration = false,
+    this.onFinish,
+  }) : super(gravity: isCinematic ? Vector2.zero() : Vector2(0, -10));
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    add(Background(world.gravity));
     addContactCallback(BallContact());
     final boundaries = createBoundaries(this);
     addAll(boundaries);
@@ -31,20 +38,18 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     final puzzleStartPosition = center - startOffset;
     boxes = generateBoxes(puzzleStartPosition).toList(growable: false);
     addAll(boxes);
-    addAll(generateFrame(center));
+    if (!isCelebration) {
+      addAll(generateFrame(center));
+    }
     boxes.sort((b1, b2) => b1.number.compareTo(b2.number));
 
     children.register<EventBall>();
-    children.register<FrameBlock>();
 
     final timer = TimerComponent(
       period: 3,
       repeat: true,
       onTick: () {
-        if (children.query<EventBall>().length < 1) {
-          //add(
-          //  NumberBlock(5, center.clone()..y += size.y / 4),
-          //);
+        if (children.query<EventBall>().length < (isCelebration ? 10 : 1)) {
           add(
             EventBall(EventType.boxExplosion, center.clone()..y += size.y / 4),
           );
@@ -58,7 +63,6 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   void onDragStart(int pointerId, DragStartInfo info) {
     if (!isCinematic) {
       super.onDragStart(pointerId, info);
-      print(isSolved());
     }
   }
 
@@ -66,12 +70,16 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   void update(double dt) {
     if (dt < 1) {
       super.update(dt);
+      if (!isCinematic && isSolved()) {
+        onFinish?.call();
+      }
     }
   }
 
+  // This vector2 allows us to not create 4 new objects every tick in isSolved.
+  final Vector2 _diff = Vector2.zero();
+
   bool isSolved() {
-    print(boxes.map((b) => b.number));
-    // TODO: Add wiggle room
     final halfBoxLength = boxLength / 2 + 1;
     for (var y = 1; y <= numberOfBoxesY; y++) {
       for (var x = 1; x <= numberOfBoxesX; x++) {
@@ -81,22 +89,23 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
         }
         final i = x + ((y - 1) * numberOfBoxesX) - 1;
         final current = boxes[i];
-        print(current.number);
         if (y > 1) {
           // Check box that should be above the current box
           final above = boxes[i - numberOfBoxesX];
-          final diff = above.body.position - current.body.position;
-          if (diff.y < 0 || diff.x.abs() > halfBoxLength) {
-            print('above');
+          _diff
+            ..setFrom(above.body.position)
+            ..sub(current.body.position);
+          if (_diff.y < 0 || _diff.x.abs() > halfBoxLength) {
             return false;
           }
         }
         if (x > 1) {
           // Check box that should be to the left of the current box
           final left = boxes[i - 1];
-          final diff = left.body.position - current.body.position;
-          if (diff.x > 0 || diff.y.abs() > halfBoxLength) {
-            print('left');
+          _diff
+            ..setFrom(left.body.position)
+            ..sub(current.body.position);
+          if (_diff.x > 0 || _diff.y.abs() > halfBoxLength) {
             return false;
           }
         }
@@ -104,18 +113,20 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
             i + numberOfBoxesX < numberOfBoxesX * numberOfBoxesY - 1) {
           // Check box that should be below the current box
           final below = boxes[i + numberOfBoxesX];
-          final diff = below.body.position - current.body.position;
-          if (diff.y > 0 || diff.x.abs() > halfBoxLength) {
-            print('below');
+          _diff
+            ..setFrom(below.body.position)
+            ..sub(current.body.position);
+          if (_diff.y > 0 || _diff.x.abs() > halfBoxLength) {
             return false;
           }
         }
         if (x < numberOfBoxesX) {
           // Check box that should be to the right of the current box
           final right = boxes[i + 1];
-          final diff = right.body.position - current.body.position;
-          if (diff.x < 0 || diff.y.abs() > halfBoxLength) {
-            print('right');
+          _diff
+            ..setFrom(right.body.position)
+            ..sub(current.body.position);
+          if (_diff.x < 0 || _diff.y.abs() > halfBoxLength) {
             return false;
           }
         }
@@ -127,9 +138,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   Iterable<NumberBlock> generateBoxes(Vector2 puzzleStartPosition) sync* {
     final numbers =
         List.generate(numberOfBoxesX * numberOfBoxesY - 1, (i) => i + 1)
-            .reversed
-            .toList();
-    //..shuffle();
+          ..shuffle();
 
     // Create boxes with numbers in them in a square
     for (var y = 0; y < numberOfBoxesY; y++) {
