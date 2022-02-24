@@ -38,6 +38,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     addContactCallback(BallContact());
     final boundaries = createBoundaries(this);
     addAll(boundaries);
+
     final center = screenToWorld(camera.viewport.effectiveSize / 2);
     final halfBoxLength = boxLength / 2;
     final startOffset =
@@ -45,24 +46,31 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     final puzzleStartPosition = center - startOffset;
     boxes = generateBoxes(puzzleStartPosition).toList(growable: false);
     addAll(boxes);
+    boxes.sort((b1, b2) => b1.number.compareTo(b2.number));
+
     if (!isCelebration) {
       addAll(generateFrame(center));
     }
     if (!isCinematic) {
       add(scoreCounter = ScoreCounter());
     }
-    boxes.sort((b1, b2) => b1.number.compareTo(b2.number));
 
     children.register<EventBall>();
-
-    final timer = TimerComponent(
-      period: 3,
+    children.register<TimerComponent>();
+    final numberOfBalls =
+        ((camera.viewport.effectiveSize.length / 1000).floor()).clamp(1, 10);
+    late final timer = TimerComponent(
+      period: 1,
       repeat: true,
+      removeOnFinish: true,
       onTick: () {
-        if (children.query<EventBall>().length < (isCelebration ? 10 : 1)) {
-          add(
-            EventBall(EventType.boxExplosion, center.clone()..y += size.y / 4),
-          );
+        if (children.query<EventBall>().length < numberOfBalls) {
+          addBall();
+        } else {
+          // TODO: Refactor this.
+          children
+              .query<TimerComponent>()
+              .forEach((t) => t.timer.repeat = false);
         }
       },
     );
@@ -130,7 +138,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
             return false;
           }
         }
-        if (x < numberOfBoxesX) {
+        if (x < numberOfBoxesX && i < numberOfBoxesY * numberOfBoxesX - 2) {
           // Check box that should be to the right of the current box
           final right = boxes[i + 1];
           _diff
@@ -143,6 +151,14 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       }
     }
     return true;
+  }
+
+  void addBall() {
+    if (children.query<EventBall>().length < 10) {
+      final center = screenToWorld(camera.viewport.effectiveSize / 2);
+      scoreCounter.score += 50;
+      add(EventBall(EventType.boxExplosion, center.clone()..y += size.y / 4));
+    }
   }
 
   Iterable<NumberBlock> generateBoxes(Vector2 puzzleStartPosition) sync* {

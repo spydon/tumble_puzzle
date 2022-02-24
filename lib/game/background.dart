@@ -23,8 +23,7 @@ class Background extends ParallaxComponent {
         ParallaxImageData('bg2.png'),
       ],
       baseVelocity: velocity,
-      velocityMultiplierDelta: Vector2(1.5, 1.5),
-      //fill: LayerFill.none,
+      velocityMultiplierDelta: Vector2.all(2),
       repeat: ImageRepeat.repeat,
     );
   }

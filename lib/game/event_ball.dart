@@ -64,8 +64,11 @@ class BallContact extends ContactCallback<EventBall, PositionBodyComponent> {
     );
     final ballComponent = ball.positionComponent!;
     final otherComponent = other.positionComponent!;
-    final explosionCenter =
-        (ballComponent.absoluteCenter + otherComponent.absoluteCenter) / 2;
+    final ballSize = ballComponent.size / 2;
+    final maxDiff = (otherComponent.absoluteCenter -
+        ballComponent.absoluteCenter)
+      ..clamp(-ballSize, ballSize);
+    final explosionCenter = ballComponent.absoluteCenter + maxDiff;
     final localExplosionPosition = otherComponent.toLocal(explosionCenter);
     other.positionComponent?.add(ExplosionComponent(localExplosionPosition));
   }
