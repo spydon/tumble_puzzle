@@ -5,8 +5,9 @@ import 'package:tumble_puzzle/widgets/tumble_card.dart';
 
 class GameOver extends StatelessWidget {
   final PageController controller;
+  final int score;
 
-  const GameOver(this.controller, {Key? key}) : super(key: key);
+  const GameOver(this.controller, this.score, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +26,16 @@ class GameOver extends StatelessWidget {
             ),
           ),
         ),
-        const Text(
-          'You made it!',
-          style: TextStyle(color: Colors.black, fontSize: 20),
+        Text(
+          'You made it with $score points!',
+          style: const TextStyle(color: Colors.black, fontSize: 20),
         ),
-        const Text(
-          'Without any frustration at all you managed to solve this simple game. Right?',
-          style: TextStyle(color: Colors.black, fontSize: 14),
+        Container(
+          width: 280,
+          child: const Text(
+            'Without any frustration at all you managed to solve this simple game. Right?',
+            style: TextStyle(color: Colors.black, fontSize: 14),
+          ),
         ),
       ],
     );

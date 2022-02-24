@@ -5,8 +5,9 @@ import 'package:tumble_puzzle/widgets/tumble_card.dart';
 
 class Highscore extends StatelessWidget {
   final PageController controller;
+  final List<int> scores;
 
-  const Highscore(this.controller, {Key? key}) : super(key: key);
+  const Highscore(this.controller, this.scores, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +30,11 @@ class Highscore extends StatelessWidget {
           'Highscore',
           style: TextStyle(color: Colors.black, fontSize: 20),
         ),
-        const Text(
-          '<All of the highscore>',
-          style: TextStyle(color: Colors.black, fontSize: 14),
-        ),
+        for (final score in scores)
+          Text(
+            score.toString(),
+            style: const TextStyle(color: Colors.black, fontSize: 14),
+          ),
       ],
     );
   }

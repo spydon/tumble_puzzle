@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/tumble_puzzle_game.dart';
+import '../screens/state.dart';
 
 class PuzzleWidget extends ConsumerWidget {
   final bool isCinematic;
   final bool isCelebration;
-  final Function()? onFinish;
+  final Function(int score)? onFinish;
 
   const PuzzleWidget({
     this.isCinematic = false,
@@ -43,7 +44,9 @@ class PuzzleWidget extends ConsumerWidget {
                 ),
                 FloatingActionButton(
                   child: const Icon(Icons.restore_outlined),
-                  onPressed: () => {},
+                  onPressed: () {
+                    ref.read(gameNotifierProvider.notifier).setPlaying();
+                  },
                   heroTag: null,
                 )
               ],

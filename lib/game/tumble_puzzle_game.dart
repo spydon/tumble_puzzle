@@ -8,9 +8,10 @@ import 'boundaries.dart';
 import 'event_ball.dart';
 import 'frame_block.dart';
 import 'number_block.dart';
+import 'score_counter.dart';
 
 class TumblePuzzleGame extends Forge2DGame with HasDraggables {
-  final Function()? onFinish;
+  final Function(int score)? onFinish;
   final boxLength = 8.0;
   final frameThickness = 2.0;
   final numberOfBoxesX = 4;
@@ -18,6 +19,9 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   final bool isCinematic;
   final bool isCelebration;
   late List<NumberBlock> boxes;
+  late ScoreCounter scoreCounter;
+  // TODO: remove
+  bool isFinished = false;
 
   TumblePuzzleGame({
     this.isCinematic = false,
@@ -43,6 +47,9 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     addAll(boxes);
     if (!isCelebration) {
       addAll(generateFrame(center));
+    }
+    if (!isCinematic) {
+      add(scoreCounter = ScoreCounter());
     }
     boxes.sort((b1, b2) => b1.number.compareTo(b2.number));
 
@@ -74,7 +81,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     if (dt < 1) {
       super.update(dt);
       if (!isCinematic && isSolved()) {
-        onFinish?.call();
+        onFinish?.call(scoreCounter.score.floor());
       }
     }
   }

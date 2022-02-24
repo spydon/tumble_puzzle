@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../widgets/puzzle_widget.dart';
 import 'about.dart';
+import 'game_over.dart';
 import 'highscore.dart';
 import 'menu.dart';
 import 'state.dart';
@@ -20,8 +21,8 @@ class Home extends ConsumerWidget {
           PuzzleWidget(
             isCinematic: state.cinematic,
             isCelebration: state.celebration,
-            onFinish: () {
-              ref.read(gameNotifierProvider.notifier).setGameOver();
+            onFinish: (int score) {
+              ref.read(gameNotifierProvider.notifier).setGameOver(score);
             },
           ),
           if (state.cinematic)
@@ -29,9 +30,9 @@ class Home extends ConsumerWidget {
               controller: controller,
               children: <Widget>[
                 Menu(controller),
-                Highscore(controller),
+                Highscore(controller, state.scores),
                 About(controller),
-                Highscore(controller),
+                GameOver(controller, state.score),
               ],
             )
         ],
