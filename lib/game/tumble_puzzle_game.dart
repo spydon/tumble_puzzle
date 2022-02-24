@@ -1,4 +1,5 @@
 import 'package:flame/components.dart';
+import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 
@@ -27,6 +28,8 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    // TODO(spydon): This has to be only [size] once it is updated to v1.1
+    camera.viewport = FixedResolutionViewport(size * camera.zoom);
     add(Background(world.gravity));
     addContactCallback(BallContact());
     final boundaries = createBoundaries(this);
