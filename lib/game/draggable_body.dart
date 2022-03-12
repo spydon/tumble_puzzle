@@ -1,11 +1,10 @@
-import 'dart:math';
-
-import 'package:flame/extensions.dart';
 import 'package:flame/input.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 
-mixin DraggableBody on PositionBodyComponent {
+import 'drag_arm.dart';
+
+mixin DraggableBody on BodyComponent {
   late Body _groundBody;
   MouseJoint? mouseJoint;
   final Paint rubberPaint = Paint()
@@ -13,40 +12,12 @@ mixin DraggableBody on PositionBodyComponent {
     ..style = PaintingStyle.stroke
     ..strokeCap = StrokeCap.round
     ..strokeWidth = 5.0;
+  DragArm? dragArm;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     _groundBody = world.createBody(BodyDef());
-  }
-
-  @override
-  void render(Canvas c) {
-    super.render(c);
-    if (mouseJoint != null) {
-      final pointA = (body.localPoint(mouseJoint!.anchorA)..y *= -1).toOffset();
-      final pointB = (body.localPoint(mouseJoint!.anchorB)..y *= -1).toOffset();
-      final waveLength = pointB - pointA;
-      final diffLength = waveLength.distance;
-      const maxStrokeWidth = 2.0;
-      const minStrokeWidth = 0.3;
-      final strokeWidth = maxStrokeWidth - diffLength / 20;
-      rubberPaint.strokeWidth =
-          strokeWidth.clamp(minStrokeWidth, maxStrokeWidth);
-      final path = Path()..moveTo(pointA.dx, pointA.dy);
-      final amplitude = Offset(
-        waveLength.dx / 2 + min(10, diffLength / 2),
-        waveLength.dy / 2 + min(10, diffLength / 2),
-      );
-      path.relativeConicTo(
-        amplitude.dx,
-        amplitude.dy,
-        waveLength.dx,
-        waveLength.dy,
-        1,
-      );
-      c.drawPath(path, rubberPaint);
-    }
   }
 
   bool onDragStart(DragStartInfo info) {
@@ -60,6 +31,7 @@ mixin DraggableBody on PositionBodyComponent {
       ..bodyB = body;
 
     mouseJoint ??= world.createJoint(mouseJointDef) as MouseJoint;
+    add(dragArm = DragArm(body: body, mouseJoint: mouseJoint!));
 
     return false;
   }
@@ -74,6 +46,7 @@ mixin DraggableBody on PositionBodyComponent {
   }
 
   bool onDragCancel() {
+    remove(dragArm!);
     if (mouseJoint == null) {
       return true;
     }

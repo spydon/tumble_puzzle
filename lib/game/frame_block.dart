@@ -1,4 +1,3 @@
-import 'package:flame/components.dart';
 import 'package:flame/components.dart' as flame;
 import 'package:flame_forge2d/flame_forge2d.dart';
 
@@ -11,16 +10,16 @@ enum Direction {
   west,
 }
 
-class FrameBlock extends PositionBodyComponent
-    with flame.Draggable, DraggableBody {
+class FrameBlock extends BodyComponent with flame.Draggable, DraggableBody {
   final Vector2 startPosition;
+  final Vector2 size;
   final bool isStatic;
 
   FrameBlock(
     this.startPosition,
-    Vector2 size, {
+    this.size, {
     this.isStatic = false,
-  }) : super(size: size);
+  });
 
   @override
   Body createBody() {
@@ -38,11 +37,5 @@ class FrameBlock extends PositionBodyComponent
       ..type = isStatic ? BodyType.static : BodyType.dynamic;
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
-  }
-
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-    positionComponent = RectangleComponent(size: size);
   }
 }

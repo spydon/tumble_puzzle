@@ -35,7 +35,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   Future<void> onLoad() async {
     await super.onLoad();
     print('start onLoad');
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
     // TODO(spydon): This has to be only [size] once it is updated to v1.1
     camera.viewport = FixedResolutionViewport(size * camera.zoom);
     add(Background(world.gravity));

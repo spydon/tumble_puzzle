@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 
 import 'draggable_body.dart';
 
-class NumberBlock extends PositionBodyComponent
-    with flame.Draggable, DraggableBody {
+class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
   final int number;
   final Vector2 startPosition;
   final double sideLength;
   static final _paint = Paint()..color = Colors.blue;
+  final Vector2 size;
 
   NumberBlock(this.number, this.startPosition, {this.sideLength = 6})
-      : super(size: Vector2.all(sideLength));
+      : size = Vector2.all(sideLength);
 
   @override
   Body createBody() {
@@ -51,24 +51,27 @@ class NumberBlock extends PositionBodyComponent
         //],
       ),
     );
-    positionComponent = RectangleComponent.square(size: sideLength)
-      ..add(
-        TextComponent(
-          text: number.toString(),
-          textRenderer: _textRenderer,
-          anchor: Anchor.center,
-          position: size / 2,
-          priority: -1,
+    add(
+      RectangleComponent.square(
+          position: Vector2.all(-sideLength / 2), size: sideLength)
+        ..add(
+          TextComponent(
+            text: number.toString(),
+            textRenderer: _textRenderer,
+            anchor: Anchor.center,
+            position: size / 2,
+            priority: -1,
+          ),
+        )
+        ..add(
+          RectangleComponent(
+            size: Vector2(sideLength / 2, sideLength / 20),
+            position: Vector2(sideLength / 2, sideLength * (3.8 / 5)),
+            anchor: Anchor.center,
+            paint: Paint()..color = Colors.black38,
+          ),
         ),
-      )
-      ..add(
-        RectangleComponent(
-          size: Vector2(sideLength / 2, sideLength / 20),
-          position: Vector2(sideLength / 2, sideLength * (3.8 / 5)),
-          anchor: Anchor.center,
-          paint: Paint()..color = Colors.black38,
-        ),
-      );
+    );
     //}
   }
 }

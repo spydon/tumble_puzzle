@@ -2,11 +2,11 @@ import 'package:flame/components.dart' as flame;
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/contact_callbacks.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flame_forge2d/position_body_component.dart';
 import 'package:flutter/material.dart';
 
 import 'draggable_body.dart';
 import 'explosion.dart';
+import 'number_block.dart';
 
 enum EventType {
   frameExplosion,
@@ -14,15 +14,15 @@ enum EventType {
   boxExplosion,
 }
 
-class EventBall extends PositionBodyComponent
-    with flame.Draggable, DraggableBody {
+class EventBall extends BodyComponent with flame.Draggable, DraggableBody {
   final EventType type;
   final Vector2 startPosition;
+  final Vector2 size;
   final double radius;
   static final _paint = Paint()..color = Colors.blue;
 
   EventBall(this.type, this.startPosition, {this.radius = 3})
-      : super(size: Vector2.all(radius * 2));
+      : size = Vector2.all(radius * 2);
 
   @override
   Body createBody() {
@@ -41,38 +41,35 @@ class EventBall extends PositionBodyComponent
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
-
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-    //debugMode = true;
-
-    positionComponent = flame.CircleComponent(radius: radius);
-  }
 }
 
-class BallContact extends ContactCallback<EventBall, PositionBodyComponent> {
+class BallContact extends ContactCallback<EventBall, DraggableBody> {
   BallContact();
 
   @override
-  void begin(EventBall ball, PositionBodyComponent other, Contact contact) {
+  void begin(EventBall ball, DraggableBody other, Contact contact) {
     final impulse = Vector2.random() - Vector2.random();
     other.body.applyLinearImpulse(
       impulse
         ..negate()
         ..scale(ball.body.mass * 200),
     );
-    final ballComponent = ball.positionComponent!;
-    final otherComponent = other.positionComponent!;
-    final ballSize = ballComponent.size / 2;
-    final maxDiff = (otherComponent.absoluteCenter -
-        ballComponent.absoluteCenter)
-      ..clamp(-ballSize, ballSize);
-    final explosionCenter = ballComponent.absoluteCenter + maxDiff;
-    final localExplosionPosition = otherComponent.toLocal(explosionCenter);
-    other.positionComponent?.add(ExplosionComponent(localExplosionPosition));
+    final ballSize = ball.size / 2;
+    //final explosionCenter = ball.body.position + maxDiff;
+    //final explosionCenter = (ball.body.position - other.body.position) / 2;
+    if (other is NumberBlock) {
+      final explosionCenter = contact.manifold.localPoint;
+      other.add(ExplosionComponent(explosionCenter..y *= -1));
+    } else {
+      final explosionCenter = (ball.body.position - other.body.position)
+        ..rotate(-other.angle);
+      explosionCenter.x < explosionCenter.y
+          ? explosionCenter.x /= 2
+          : explosionCenter.y /= 2;
+      other.add(ExplosionComponent(explosionCenter..y *= -1));
+    }
   }
 
   @override
-  void end(EventBall ball, PositionBodyComponent other, Contact contact) {}
+  void end(EventBall ball, DraggableBody other, Contact contact) {}
 }
