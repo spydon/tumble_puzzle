@@ -3,6 +3,7 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 
 import 'drag_arm.dart';
+import 'explosion.dart';
 
 mixin DraggableBody on BodyComponent {
   late Body _groundBody;
@@ -17,6 +18,7 @@ mixin DraggableBody on BodyComponent {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    children.register<ExplosionComponent>();
     _groundBody = world.createBody(BodyDef());
   }
 
@@ -32,6 +34,7 @@ mixin DraggableBody on BodyComponent {
 
     mouseJoint ??= world.createJoint(mouseJointDef) as MouseJoint;
     add(dragArm = DragArm(body: body, mouseJoint: mouseJoint!));
+    parent?.children.changePriority(this, 2);
 
     return false;
   }
@@ -47,6 +50,7 @@ mixin DraggableBody on BodyComponent {
 
   bool onDragCancel() {
     remove(dragArm!);
+    parent?.children.changePriority(this, 0);
     if (mouseJoint == null) {
       return true;
     }

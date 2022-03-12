@@ -36,14 +36,18 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     await super.onLoad();
     print('start onLoad');
     await Future.delayed(const Duration(seconds: 1));
-    // TODO(spydon): This has to be only [size] once it is updated to v1.1
-    camera.viewport = FixedResolutionViewport(size * camera.zoom);
+
+    final viewportSize = camera.canvasSize.clone();
+    viewportSize.x = viewportSize.x.clamp(500, double.infinity);
+    viewportSize.y = viewportSize.y.clamp(800, double.infinity);
+    camera.viewport = FixedResolutionViewport(viewportSize);
+
     add(Background(world.gravity));
     addContactCallback(BallContact());
     final boundaries = createBoundaries(this);
     addAll(boundaries);
 
-    final center = screenToWorld(camera.viewport.effectiveSize / 2);
+    final center = screenToWorld(camera.canvasSize / 2);
     final halfBoxLength = boxLength / 2;
     final startOffset =
         Vector2.all(boxLength * (numberOfBoxesX / 2) - halfBoxLength)..y *= -1;
@@ -159,9 +163,16 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     return true;
   }
 
+  Vector2 get viewportOffset {
+    return canvasSize.clone()
+      ..sub(camera.viewport.effectiveSize)
+      ..scale(0.5);
+  }
+
   void addBall() {
     if (children.query<EventBall>().length < 10) {
-      final center = screenToWorld(camera.viewport.effectiveSize / 2);
+      final center = screenToWorld(camera.canvasSize / 2);
+      print(center);
       scoreCounter?.score += 50;
       add(EventBall(EventType.boxExplosion, center.clone()..y += size.y / 4));
     }

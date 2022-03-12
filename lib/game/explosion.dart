@@ -13,7 +13,10 @@ class ExplosionComponent extends SpriteAnimationComponent
   Future<void> onLoad() async {
     await super.onLoad();
     final rng = Random();
-    size = Vector2.all(10) + Vector2.random(rng) * 30;
+    size = Vector2.random(rng)
+      ..scale(30)
+      ..x += 10
+      ..y += 10;
     final animationData = SpriteAnimationData.sequenced(
       amount: 64,
       stepTime: 0.05,

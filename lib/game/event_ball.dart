@@ -1,6 +1,5 @@
 import 'package:flame/components.dart' as flame;
 import 'package:flame/components.dart';
-import 'package:flame_forge2d/contact_callbacks.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 
@@ -54,9 +53,9 @@ class BallContact extends ContactCallback<EventBall, DraggableBody> {
         ..negate()
         ..scale(ball.body.mass * 200),
     );
-    final ballSize = ball.size / 2;
-    //final explosionCenter = ball.body.position + maxDiff;
-    //final explosionCenter = (ball.body.position - other.body.position) / 2;
+    if (other.children.query<ExplosionComponent>().length > 5) {
+      return;
+    }
     if (other is NumberBlock) {
       final explosionCenter = contact.manifold.localPoint;
       other.add(ExplosionComponent(explosionCenter..y *= -1));

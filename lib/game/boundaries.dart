@@ -5,7 +5,7 @@ import 'package:forge2d/forge2d.dart';
 
 List<Wall> createBoundaries(Forge2DGame game) {
   final topLeft = Vector2.zero();
-  final bottomRight = game.screenToWorld(game.camera.viewport.effectiveSize);
+  final bottomRight = game.screenToWorld(game.canvasSize);
   final topRight = Vector2(bottomRight.x, topLeft.y);
   final bottomLeft = Vector2(topLeft.x, bottomRight.y);
 
