@@ -4,31 +4,43 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/tumble_puzzle_game.dart';
 import '../screens/state.dart';
+import 'loading_widget.dart';
 
 class PuzzleWidget extends ConsumerWidget {
-  final bool isCinematic;
-  final bool isCelebration;
-  final Function(int score)? onFinish;
-
   const PuzzleWidget({
-    this.isCinematic = false,
-    this.isCelebration = false,
-    this.onFinish,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final game = TumblePuzzleGame(
-      isCinematic: isCinematic,
-      isCelebration: isCelebration,
-      onFinish: onFinish,
-    );
+    final state = ref.watch(gameNotifierProvider);
+    late TumblePuzzleGame game;
+    print('building');
+    //final game = TumblePuzzleGame(
+    //    isCinematic: isCinematic,
+    //    isCelebration: isCelebration,
+    //    onFinish: onFinish,
+    //    onLoaded: () {
+    //      ref.read(gameNotifierProvider.notifier).setLoaded();
+    //    });
     return Scaffold(
-      body: GameWidget(game: game),
+      body: GameWidget(
+        key: Key('game: ${state.cinematic} ${state.celebration}'),
+        game: game = TumblePuzzleGame(
+          isCinematic: state.cinematic,
+          isCelebration: state.celebration,
+          onFinish: (score) {
+            ref.read(gameNotifierProvider.notifier).setGameOver(score);
+          },
+          onLoaded: () {
+            ref.read(gameNotifierProvider.notifier).setLoaded();
+          },
+        ),
+        loadingBuilder: (_) => LoadingWidget(),
+      ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
-        children: isCinematic
+        children: state.cinematic
             ? []
             : [
                 FloatingActionButton(

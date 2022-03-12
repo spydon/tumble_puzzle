@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flame/extensions.dart';
 import 'package:flame/input.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flame_forge2d/position_body_component.dart';
 import 'package:flutter/material.dart';
 
 mixin DraggableBody on PositionBodyComponent {
@@ -50,7 +49,7 @@ mixin DraggableBody on PositionBodyComponent {
     }
   }
 
-  bool onDragStart(int pointerId, DragStartInfo info) {
+  bool onDragStart(DragStartInfo info) {
     final mouseJointDef = MouseJointDef()
       ..maxForce = 50 * body.mass
       ..dampingRatio = 0.1
@@ -65,16 +64,16 @@ mixin DraggableBody on PositionBodyComponent {
     return false;
   }
 
-  bool onDragUpdate(int pointerId, DragUpdateInfo info) {
+  bool onDragUpdate(DragUpdateInfo info) {
     mouseJoint?.setTarget(info.eventPosition.game);
     return false;
   }
 
-  bool onDragEnd(int pointerId, _) {
-    return onDragCancel(pointerId);
+  bool onDragEnd(_) {
+    return onDragCancel();
   }
 
-  bool onDragCancel(int pointerId) {
+  bool onDragCancel() {
     if (mouseJoint == null) {
       return true;
     }

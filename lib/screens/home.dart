@@ -19,13 +19,9 @@ class Home extends ConsumerWidget {
       body: Stack(
         children: [
           PuzzleWidget(
-            isCinematic: state.cinematic,
-            isCelebration: state.celebration,
-            onFinish: (int score) {
-              ref.read(gameNotifierProvider.notifier).setGameOver(score);
-            },
+            key: Key('${state.cinematic}, ${state.celebration}'),
           ),
-          if (state.cinematic)
+          if (state.cinematic && state.loaded)
             PageView(
               controller: controller,
               children: <Widget>[

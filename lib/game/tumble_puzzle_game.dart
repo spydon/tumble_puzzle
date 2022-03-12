@@ -12,6 +12,7 @@ import 'score_counter.dart';
 
 class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   final Function(int score)? onFinish;
+  final Function()? onLoaded;
   final boxLength = 8.0;
   final frameThickness = 2.0;
   final numberOfBoxesX = 4;
@@ -19,7 +20,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   final bool isCinematic;
   final bool isCelebration;
   late List<NumberBlock> boxes;
-  late ScoreCounter scoreCounter;
+  ScoreCounter? scoreCounter;
   // TODO: remove
   bool isFinished = false;
 
@@ -27,11 +28,14 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     this.isCinematic = false,
     this.isCelebration = false,
     this.onFinish,
+    this.onLoaded,
   }) : super(gravity: isCinematic ? Vector2.zero() : Vector2(0, -10));
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+    print('start onLoad');
+    await Future.delayed(Duration(seconds: 3));
     // TODO(spydon): This has to be only [size] once it is updated to v1.1
     camera.viewport = FixedResolutionViewport(size * camera.zoom);
     add(Background(world.gravity));
@@ -75,6 +79,8 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       },
     );
     add(timer);
+    print('call onLoaded');
+    onLoaded?.call();
   }
 
   @override
@@ -89,7 +95,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     if (dt < 1) {
       super.update(dt);
       if (!isCinematic && isSolved()) {
-        onFinish?.call(scoreCounter.score.floor());
+        onFinish?.call(scoreCounter!.score.floor());
       }
     }
   }
@@ -156,7 +162,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   void addBall() {
     if (children.query<EventBall>().length < 10) {
       final center = screenToWorld(camera.viewport.effectiveSize / 2);
-      scoreCounter.score += 50;
+      scoreCounter?.score += 50;
       add(EventBall(EventType.boxExplosion, center.clone()..y += size.y / 4));
     }
   }

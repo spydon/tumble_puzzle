@@ -84,14 +84,14 @@ packages:
       name: flame
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.1.0-releasecandidate.4"
   flame_forge2d:
     dependency: "direct main"
     description:
       name: flame_forge2d
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.3"
+    version: "0.9.0-releasecandidate.4"
   flame_lint:
     dependency: "direct dev"
     description:
