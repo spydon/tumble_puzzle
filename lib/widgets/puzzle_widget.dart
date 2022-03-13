@@ -2,7 +2,6 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../game/tumble_puzzle_game.dart';
 import '../screens/state.dart';
 import 'loading_widget.dart';
 
@@ -14,28 +13,10 @@ class PuzzleWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(gameNotifierProvider);
-    late TumblePuzzleGame game;
-    print('building');
-    //final game = TumblePuzzleGame(
-    //    isCinematic: isCinematic,
-    //    isCelebration: isCelebration,
-    //    onFinish: onFinish,
-    //    onLoaded: () {
-    //      ref.read(gameNotifierProvider.notifier).setLoaded();
-    //    });
     return Scaffold(
       body: GameWidget(
         key: Key('game: ${state.cinematic} ${state.celebration}'),
-        game: game = TumblePuzzleGame(
-          isCinematic: state.cinematic,
-          isCelebration: state.celebration,
-          onFinish: (score) {
-            ref.read(gameNotifierProvider.notifier).setGameOver(score);
-          },
-          onLoaded: () {
-            ref.read(gameNotifierProvider.notifier).setLoaded();
-          },
-        ),
+        game: state.game,
         loadingBuilder: (_) => LoadingWidget(),
       ),
       floatingActionButton: Column(
@@ -43,18 +24,31 @@ class PuzzleWidget extends ConsumerWidget {
         children: state.cinematic
             ? []
             : [
-                FloatingActionButton(
-                  child: const Icon(Icons.sports_baseball_outlined),
-                  onPressed: game.addBall,
-                  heroTag: null,
+                InkWell(
+                  child: FloatingActionButton.extended(
+                    icon: const Icon(Icons.sports_baseball_outlined),
+                    hoverColor: Colors.redAccent,
+                    label: const Text('Add a ball'),
+                    isExtended: state.hovers['add-ball'] ?? false,
+                    onPressed: state.game.addBall,
+                  ),
+                  onTap: () {},
+                  onHover: (isHovering) {
+                    ref.read(gameNotifierProvider.notifier).setHover(
+                          'add-ball',
+                          isHovering,
+                        );
+                  },
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 FloatingActionButton(
                   child: const Icon(Icons.free_breakfast_outlined),
+                  hoverColor: Colors.redAccent,
+                  tooltip: 'Switch gravity',
                   onPressed: () {
-                    final gravity = game.world.gravity;
+                    final gravity = state.game.world.gravity;
                     gravity.y = gravity.isZero() ? -10 : 0;
                   },
                   heroTag: null,
@@ -64,6 +58,8 @@ class PuzzleWidget extends ConsumerWidget {
                 ),
                 FloatingActionButton(
                   child: const Icon(Icons.restore_outlined),
+                  hoverColor: Colors.redAccent,
+                  tooltip: 'Restart',
                   onPressed: () {
                     ref.read(gameNotifierProvider.notifier).setPlaying();
                   },

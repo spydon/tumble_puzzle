@@ -21,7 +21,7 @@ class Home extends ConsumerWidget {
           PuzzleWidget(
             key: Key('${state.cinematic}, ${state.celebration}'),
           ),
-          if (state.cinematic && state.loaded)
+          if (state.cinematic && state.preLoaded)
             PageView(
               controller: controller,
               children: <Widget>[

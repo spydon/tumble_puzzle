@@ -17,25 +17,25 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   final frameThickness = 2.0;
   final numberOfBoxesX = 4;
   final numberOfBoxesY = 4;
-  final bool isCinematic;
-  final bool isCelebration;
+  final bool cinematic;
+  final bool celebration;
+  final bool preLoaded;
   late List<NumberBlock> boxes;
   ScoreCounter? scoreCounter;
   // TODO: remove
   bool isFinished = false;
 
   TumblePuzzleGame({
-    this.isCinematic = false,
-    this.isCelebration = false,
+    this.cinematic = true,
+    this.celebration = false,
+    this.preLoaded = false,
     this.onFinish,
     this.onLoaded,
-  }) : super(gravity: isCinematic ? Vector2.zero() : Vector2(0, -10));
+  }) : super(gravity: cinematic ? Vector2.zero() : Vector2(0, -10));
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    print('start onLoad');
-    await Future.delayed(const Duration(seconds: 1));
 
     final viewportSize = camera.canvasSize.clone();
     viewportSize.x = viewportSize.x.clamp(500, double.infinity);
@@ -56,10 +56,10 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     addAll(boxes);
     boxes.sort((b1, b2) => b1.number.compareTo(b2.number));
 
-    if (!isCelebration) {
+    if (!celebration) {
       addAll(generateFrame(center));
     }
-    if (!isCinematic) {
+    if (!cinematic) {
       add(scoreCounter = ScoreCounter());
     }
 
@@ -73,7 +73,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       removeOnFinish: true,
       onTick: () {
         if (children.query<EventBall>().length < numberOfBalls) {
-          addBall();
+          addBall(startBall: true);
         } else {
           // TODO: Refactor this.
           children
@@ -82,14 +82,16 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
         }
       },
     );
+    if (!preLoaded) {
+      await Future.delayed(const Duration(seconds: 3));
+    }
     add(timer);
-    print('call onLoaded');
     onLoaded?.call();
   }
 
   @override
   void onDragStart(int pointerId, DragStartInfo info) {
-    if (!isCinematic) {
+    if (!cinematic) {
       super.onDragStart(pointerId, info);
     }
   }
@@ -98,7 +100,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   void update(double dt) {
     if (dt < 1) {
       super.update(dt);
-      if (!isCinematic && isSolved()) {
+      if (!cinematic && isSolved()) {
         onFinish?.call(scoreCounter!.score.floor());
       }
     }
@@ -163,17 +165,12 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     return true;
   }
 
-  Vector2 get viewportOffset {
-    return canvasSize.clone()
-      ..sub(camera.viewport.effectiveSize)
-      ..scale(0.5);
-  }
-
-  void addBall() {
+  void addBall({bool startBall = false}) {
     if (children.query<EventBall>().length < 10) {
       final center = screenToWorld(camera.canvasSize / 2);
-      print(center);
-      scoreCounter?.score += 50;
+      if (!startBall) {
+        scoreCounter?.score += 50;
+      }
       add(EventBall(EventType.boxExplosion, center.clone()..y += size.y / 4));
     }
   }
@@ -217,21 +214,21 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       FrameBlock(
         center + Vector2(-centerDistance, 0),
         verticalSize,
-        isStatic: isCinematic,
+        isStatic: cinematic,
       ),
 
       // Right frame part
       FrameBlock(
         center + Vector2(centerDistance, 0),
         verticalSize,
-        isStatic: isCinematic,
+        isStatic: cinematic,
       ),
 
       // Top frame part
       FrameBlock(
         center + Vector2(0, centerDistance),
         horizontalLength,
-        isStatic: isCinematic,
+        isStatic: cinematic,
       ),
 
       // Bottom frame part
