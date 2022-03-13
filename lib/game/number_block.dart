@@ -18,6 +18,17 @@ class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
   final double sideLength;
   final Vector2 size;
 
+  @override
+  final bool renderBody = false;
+
+  static final _textRenderer = TextPaint(
+    style: GoogleFonts.vt323(
+      fontSize: 5,
+      color: Colors.white60,
+      fontWeight: FontWeight.bold,
+    ),
+  );
+
   NumberBlock(
     this.number,
     this.startPosition, {
@@ -48,13 +59,6 @@ class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final _textRenderer = TextPaint(
-      style: GoogleFonts.vt323(
-        fontSize: 5,
-        color: Colors.white60,
-        fontWeight: FontWeight.bold,
-      ),
-    );
     final boxSize = Vector2.all(sideLength);
     final boxSprite = await () {
       switch (color) {
@@ -64,7 +68,6 @@ class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
           return Sprite.load('red_box.png');
       }
     }();
-    renderBody = false;
     add(
       flame.SpriteComponent(
         sprite: boxSprite,
@@ -88,6 +91,5 @@ class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
           ),
         ),
     );
-    //}
   }
 }

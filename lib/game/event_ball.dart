@@ -1,6 +1,8 @@
 import 'package:flame/components.dart' as flame;
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 
 import 'draggable_body.dart';
@@ -18,10 +20,14 @@ class EventBall extends BodyComponent with flame.Draggable, DraggableBody {
   final Vector2 startPosition;
   final Vector2 size;
   final double radius;
-  static final _paint = Paint()..color = Colors.blue;
+  late final flame.SpriteComponent fireBall;
+
+  @override
+  final renderBody = true;
 
   EventBall(this.type, this.startPosition, {this.radius = 3})
-      : size = Vector2.all(radius * 2);
+      : size = Vector2.all(radius * 2),
+        super(paint: Paint()..color = Colors.black);
 
   @override
   Body createBody() {
@@ -40,6 +46,46 @@ class EventBall extends BodyComponent with flame.Draggable, DraggableBody {
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
   }
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+
+    final grayBallSprite = await Sprite.load('ball_gray.png');
+    final fireBallSprite = await Sprite.load('ball_fire.png');
+    add(
+      flame.SpriteComponent(
+        sprite: grayBallSprite,
+        position: -size / 2,
+        size: size,
+      ),
+    );
+    add(
+      fireBall = flame.SpriteComponent(
+        sprite: fireBallSprite,
+        position: -size / 2,
+        size: size,
+      )..add(
+          OpacityEffect.fadeOut(
+            EffectController(
+              duration: 1.0,
+              curve: Curves.easeOutExpo,
+            ),
+          ),
+        ),
+    );
+  }
+
+  void fadeInFire() {
+    if (fireBall.children.isEmpty) {
+      fireBall
+        ..add(
+          OpacityEffect.fadeIn(
+            EffectController(duration: 1.0, alternate: true),
+          ),
+        );
+    }
+  }
 }
 
 class BallContact extends ContactCallback<EventBall, DraggableBody> {
@@ -53,6 +99,7 @@ class BallContact extends ContactCallback<EventBall, DraggableBody> {
         ..negate()
         ..scale(ball.body.mass * 200),
     );
+    ball.fadeInFire();
     if (other.children.query<ExplosionComponent>().length > 5) {
       return;
     }

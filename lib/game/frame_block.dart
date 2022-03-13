@@ -1,7 +1,9 @@
 import 'package:flame/components.dart' as flame;
+import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 import 'draggable_body.dart';
+import 'number_block.dart';
 
 enum Direction {
   north,
@@ -14,11 +16,13 @@ class FrameBlock extends BodyComponent with flame.Draggable, DraggableBody {
   final Vector2 startPosition;
   final Vector2 size;
   final bool isStatic;
+  final BlockColor color;
 
   FrameBlock(
     this.startPosition,
     this.size, {
     this.isStatic = false,
+    this.color = BlockColor.red,
   });
 
   @override
@@ -37,5 +41,26 @@ class FrameBlock extends BodyComponent with flame.Draggable, DraggableBody {
       ..type = isStatic ? BodyType.static : BodyType.dynamic;
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
+  }
+
+  @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+
+    final boxSprite = await () {
+      switch (color) {
+        case BlockColor.green:
+          return Sprite.load('green_black_box.png');
+        case BlockColor.red:
+          return Sprite.load('red_black_box.png');
+      }
+    }();
+    add(
+      flame.SpriteComponent(
+        sprite: boxSprite,
+        position: -size / 2,
+        size: size,
+      ),
+    );
   }
 }

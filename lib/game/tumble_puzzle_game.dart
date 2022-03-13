@@ -83,7 +83,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       },
     );
     if (!preLoaded) {
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 1));
     }
     add(timer);
     onLoaded?.call();
