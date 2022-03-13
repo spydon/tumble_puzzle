@@ -2,24 +2,24 @@ import 'dart:math';
 
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ScoreCounter extends TextComponent {
   @override
   PositionType positionType = PositionType.viewport;
   double score = 500;
 
+  static final _textRenderer = TextPaint(
+    style: GoogleFonts.vt323(
+      fontSize: 40,
+      color: Colors.white60,
+      fontWeight: FontWeight.bold,
+    ),
+  );
+
   ScoreCounter()
-      : super(
-          position: Vector2.all(20),
-          textRenderer: TextPaint(
-            style: TextStyle(
-              fontSize: 24,
-              color: BasicPalette.white.color,
-            ),
-          ),
-        );
+      : super(position: Vector2.all(20), textRenderer: _textRenderer);
 
   @override
   void update(double dt) {

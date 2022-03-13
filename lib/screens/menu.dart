@@ -42,7 +42,7 @@ class Menu extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            ref.read(gameNotifierProvider.notifier).setPlaying();
+            ref.read(gameNotifierProvider.notifier).setPlay(true);
           },
           child: const Text('Play'),
         ),

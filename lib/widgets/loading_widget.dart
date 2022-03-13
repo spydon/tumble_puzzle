@@ -33,7 +33,7 @@ class LoadingScreen extends FlameGame {
       TextComponent(
         text: 'Made with Flame',
         textRenderer: pixelStyle,
-        position: (size / 2)..y += 130,
+        position: (size / 2)..y += 125,
         anchor: Anchor.center,
         priority: 1,
       ),
