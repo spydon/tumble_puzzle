@@ -4,9 +4,8 @@
   </a>
 </p>
 
-<p align="center">
-TumblePuzzle
-</p>
+
+# TumblePuzzle
 
 You are a crazy scientist god solving a slider puzzle in space. 
 Since you are a god, some rules can be bent, it doesn't necessarily make it
