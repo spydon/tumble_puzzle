@@ -38,7 +38,7 @@ class TumbleCard extends ConsumerWidget {
           color: Colors.grey.shade200.withOpacity(0.8),
           elevation: 5,
           child: Container(
-            margin: const EdgeInsets.all(10),
+            margin: const EdgeInsets.all(20),
             child: Wrap(
               runAlignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,

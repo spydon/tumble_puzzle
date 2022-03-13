@@ -1,9 +1,7 @@
-import 'package:flame/components.dart';
-import 'package:flame/game.dart';
-import 'package:flame/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../game/logo_game.dart';
 import '../widgets/tumble_card.dart';
 import 'state.dart';
 
@@ -19,49 +17,58 @@ class Menu extends ConsumerWidget {
 
   const Menu(this.controller, {Key? key}) : super(key: key);
 
+  static const instructionText =
+      '''You are a crazy scientist god solving a slider puzzle in space. 
+Since you are a god, some rules can be bent (press the buttons),
+it doesn't necessarily make it easier though...\n
+The blocks don't have to have the correct angle for you to win
+(they can be upside-down for example), as long as they go from
+1 to 15 in a square.''';
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.read(gameNotifierProvider);
     return TumbleCard(
       controller,
       children: [
-        Container(
-          width: 50,
-          height: 50,
-          child: SpriteAnimationWidget.asset(
-            path: 'ember.png',
-            data: SpriteAnimationData.sequenced(
-              amount: 3,
-              stepTime: 0.15,
-              textureSize: Vector2.all(16),
-            ),
-          ),
-        ),
+        LogoGameWidget(),
         const Text(
           'TumblePuzzle',
           style: TextStyle(color: Colors.black, fontSize: 20),
         ),
+        if (state.showInstructions)
+          const Text(
+            instructionText,
+            style: TextStyle(color: Colors.black, fontSize: 16),
+          ),
         ElevatedButton(
           onPressed: () {
-            ref.read(gameNotifierProvider.notifier).setPlay(true);
+            if (state.showInstructions) {
+              ref.read(gameNotifierProvider.notifier).setPlay(true);
+            } else {
+              ref.read(gameNotifierProvider.notifier).setInstructions(true);
+            }
           },
           child: const Text('Play'),
         ),
-        ElevatedButton(
-          onPressed: () => controller.animateToPage(
-            MenuItem.highscore.index,
-            curve: Curves.linear,
-            duration: const Duration(seconds: 1),
+        if (!state.showInstructions) ...[
+          ElevatedButton(
+            onPressed: () => controller.animateToPage(
+              MenuItem.highscore.index,
+              curve: Curves.linear,
+              duration: const Duration(seconds: 1),
+            ),
+            child: const Text('Highscore'),
           ),
-          child: const Text('Highscore'),
-        ),
-        ElevatedButton(
-          onPressed: () => controller.animateToPage(
-            MenuItem.about.index,
-            curve: Curves.linear,
-            duration: const Duration(seconds: 1),
+          ElevatedButton(
+            onPressed: () => controller.animateToPage(
+              MenuItem.about.index,
+              curve: Curves.linear,
+              duration: const Duration(seconds: 1),
+            ),
+            child: const Text('About'),
           ),
-          child: const Text('About'),
-        ),
+        ],
       ],
       withBackButton: false,
     );

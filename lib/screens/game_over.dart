@@ -1,7 +1,8 @@
 import 'package:flame/components.dart';
 import 'package:flame/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:tumble_puzzle/widgets/tumble_card.dart';
+
+import '../widgets/tumble_card.dart';
 
 class GameOver extends StatelessWidget {
   final PageController controller;

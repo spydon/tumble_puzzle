@@ -2,21 +2,13 @@ import 'package:flame/components.dart' as flame;
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
-import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 
 import 'draggable_body.dart';
 import 'explosion.dart';
 import 'number_block.dart';
 
-enum EventType {
-  frameExplosion,
-  gravity,
-  boxExplosion,
-}
-
 class EventBall extends BodyComponent with flame.Draggable, DraggableBody {
-  final EventType type;
   final Vector2 startPosition;
   final Vector2 size;
   final double radius;
@@ -25,7 +17,7 @@ class EventBall extends BodyComponent with flame.Draggable, DraggableBody {
   @override
   final renderBody = true;
 
-  EventBall(this.type, this.startPosition, {this.radius = 3})
+  EventBall(this.startPosition, {this.radius = 3})
       : size = Vector2.all(radius * 2),
         super(paint: Paint()..color = Colors.black);
 

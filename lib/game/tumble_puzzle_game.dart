@@ -174,7 +174,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       if (!startBall) {
         scoreCounter?.score += 50;
       }
-      add(EventBall(EventType.boxExplosion, center.clone()..y += size.y / 4));
+      add(EventBall(center.clone()..y += size.y / 4));
     }
   }
 

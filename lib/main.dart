@@ -4,10 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'screens/home.dart';
 
-// We create a "provider", which will store a value (here "Hello world").
-// By using a provider, this allows us to mock/override the value exposed.
-final stateProvider = StateProvider((ref) => 0);
-
 void main() {
   runApp(
     const ProviderScope(child: TumblePuzzle()),
@@ -40,7 +36,6 @@ class TumblePuzzle extends StatelessWidget {
           minimumSize: const Size(150, 50),
         ),
       ),
-      //primaryColor: Colors.amber,
       inputDecorationTheme: InputDecorationTheme(
         hoverColor: Colors.red.shade700,
         focusedBorder: const UnderlineInputBorder(

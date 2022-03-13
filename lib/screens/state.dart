@@ -6,6 +6,7 @@ import 'menu.dart';
 class GameState {
   final TumblePuzzleGame game;
   final bool preLoaded;
+  final bool showInstructions;
   final int score;
   final List<int> scores;
   final Map<String, bool> hovers;
@@ -14,6 +15,7 @@ class GameState {
   GameState({
     required this.game,
     this.preLoaded = false,
+    this.showInstructions = false,
     this.score = 0,
     this.scores = const [],
     this.hovers = const {},
@@ -26,6 +28,7 @@ class GameState {
   GameState copyWith({
     TumblePuzzleGame? game,
     bool? preLoaded,
+    bool? showInstructions,
     int? score,
     List<int>? scores,
     Map<String, bool>? hovers,
@@ -34,6 +37,7 @@ class GameState {
     return GameState(
       game: game ?? this.game,
       preLoaded: preLoaded ?? this.preLoaded,
+      showInstructions: showInstructions ?? this.showInstructions,
       score: score ?? this.score,
       scores: scores ?? this.scores,
       hovers: hovers ?? this.hovers,
@@ -69,6 +73,7 @@ class GameNotifier extends StateNotifier<GameState> {
     if (state.cinematic == playing) {
       state = state.copyWith(
         game: _retrieveGame(cinematic: !playing),
+        showInstructions: false,
         hovers: {},
       );
     }
@@ -95,10 +100,18 @@ class GameNotifier extends StateNotifier<GameState> {
 
   void setHover(String key, bool isHovering) {
     if (state.hovers[key] != isHovering) {
-      state = state.copyWith(hovers: {
-        ...state.hovers,
-        ...{key: isHovering}
-      });
+      state = state.copyWith(
+        hovers: {
+          ...state.hovers,
+          ...{key: isHovering}
+        },
+      );
+    }
+  }
+
+  void setInstructions(bool showInstructions) {
+    if (state.showInstructions != showInstructions) {
+      state = state.copyWith(showInstructions: showInstructions);
     }
   }
 }
