@@ -6,6 +6,7 @@ import 'package:flame_forge2d/forge2d_game.dart';
 import 'background.dart';
 import 'boundaries.dart';
 import 'event_ball.dart';
+import 'explosion.dart';
 import 'frame_block.dart';
 import 'number_block.dart';
 import 'score_counter.dart';
@@ -21,6 +22,8 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   final bool celebration;
   final bool preLoaded;
   late List<NumberBlock> boxes;
+  late List<FrameBlock> frame;
+  bool _staticFrame = false;
   ScoreCounter? scoreCounter;
   // TODO: remove
   bool isFinished = false;
@@ -57,7 +60,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     boxes.sort((b1, b2) => b1.number.compareTo(b2.number));
 
     if (!celebration) {
-      addAll(generateFrame(center));
+      addAll(frame = generateFrame(static: true));
     }
     if (!cinematic) {
       add(scoreCounter = ScoreCounter());
@@ -198,7 +201,19 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     }
   }
 
-  Iterable<FrameBlock> generateFrame(Vector2 center) {
+  void breakFrame() {
+    if (!_staticFrame) {
+      return;
+    }
+    frame.forEach((side) => side.removeFromParent());
+    frame.clear();
+    frame = generateFrame(static: false);
+    addAll(frame);
+  }
+
+  List<FrameBlock> generateFrame({required bool static}) {
+    _staticFrame = static;
+    final center = screenToWorld(camera.canvasSize / 2);
     final halfFrameThickness = frameThickness / 2;
     const wiggleRoom = 0.2;
     final verticalSize =
@@ -214,21 +229,21 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       FrameBlock(
         center + Vector2(-centerDistance, 0),
         verticalSize,
-        isStatic: cinematic,
+        isStatic: static,
       ),
 
       // Right frame part
       FrameBlock(
         center + Vector2(centerDistance, 0),
         verticalSize,
-        isStatic: cinematic,
+        isStatic: static,
       ),
 
       // Top frame part
       FrameBlock(
         center + Vector2(0, centerDistance),
         horizontalLength,
-        isStatic: cinematic,
+        isStatic: static,
       ),
 
       // Bottom frame part
@@ -238,6 +253,17 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
         isStatic: true,
       ),
     ];
+    if (!static) {
+      final centerDiff = Vector2.all(centerDistance);
+      final flippedCenter = center..y *= -1;
+      final explosions = [
+        ExplosionComponent(flippedCenter + centerDiff),
+        ExplosionComponent(flippedCenter - centerDiff),
+        ExplosionComponent(flippedCenter + (centerDiff.clone()..x *= -1)),
+        ExplosionComponent(flippedCenter + (centerDiff.clone()..y *= -1)),
+      ];
+      addAll(explosions);
+    }
     return frameBlocks;
   }
 }

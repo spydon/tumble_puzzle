@@ -46,6 +46,25 @@ class PuzzleWidget extends ConsumerWidget {
                 ),
                 InkWell(
                   child: FloatingActionButton.extended(
+                    icon: const Icon(Icons.warning_amber_outlined),
+                    backgroundColor: Colors.red.shade600,
+                    label: const Text('Break the frame'),
+                    isExtended: state.hovers['frame-breaker'] ?? false,
+                    onPressed: state.game.breakFrame,
+                  ),
+                  onTap: () {},
+                  onHover: (isHovering) {
+                    ref.read(gameNotifierProvider.notifier).setHover(
+                          'frame-breaker',
+                          isHovering,
+                        );
+                  },
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                InkWell(
+                  child: FloatingActionButton.extended(
                     icon: const Icon(Icons.free_breakfast_outlined),
                     backgroundColor: Colors.red.shade600,
                     label: const Text('Switch gravity'),

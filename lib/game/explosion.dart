@@ -7,7 +7,12 @@ import 'tumble_puzzle_game.dart';
 class ExplosionComponent extends SpriteAnimationComponent
     with HasGameRef<TumblePuzzleGame> {
   ExplosionComponent(Vector2 position)
-      : super(position: position, anchor: Anchor.center, removeOnFinish: true);
+      : super(
+          position: position,
+          anchor: Anchor.center,
+          removeOnFinish: true,
+          priority: 2,
+        );
 
   @override
   Future<void> onLoad() async {
