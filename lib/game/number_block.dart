@@ -2,18 +2,28 @@ import 'package:flame/components.dart' as flame;
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'draggable_body.dart';
 
+enum BlockColor {
+  red,
+  green,
+}
+
 class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
+  final BlockColor color;
   final int number;
   final Vector2 startPosition;
   final double sideLength;
-  static final _paint = Paint()..color = Colors.blue;
   final Vector2 size;
 
-  NumberBlock(this.number, this.startPosition, {this.sideLength = 6})
-      : size = Vector2.all(sideLength);
+  NumberBlock(
+    this.number,
+    this.startPosition, {
+    this.sideLength = 6,
+    this.color = BlockColor.green,
+  }) : size = Vector2.all(sideLength);
 
   @override
   Body createBody() {
@@ -37,30 +47,36 @@ class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    //debugMode = true;
+
     final _textRenderer = TextPaint(
-      style: const TextStyle(
-        color: Colors.black38,
-        fontFamily: 'monospace',
-        height: 3.50,
-        //letterSpacing: 2.0,
-        fontSize: 4.0,
-        //shadows: [
-        //  Shadow(color: Colors.red, offset: Offset(0.1, 0.1), blurRadius: 0.5),
-        //  Shadow(color: Colors.yellow, offset: Offset(0.2, 0.2), blurRadius: 1),
-        //],
+      style: GoogleFonts.vt323(
+        fontSize: 5,
+        color: Colors.white60,
+        fontWeight: FontWeight.bold,
       ),
     );
+    final boxSize = Vector2.all(sideLength);
+    final boxSprite = await () {
+      switch (color) {
+        case BlockColor.green:
+          return Sprite.load('green_box.png');
+        case BlockColor.red:
+          return Sprite.load('red_box.png');
+      }
+    }();
+    renderBody = false;
     add(
-      RectangleComponent.square(
-          position: Vector2.all(-sideLength / 2), size: sideLength)
+      flame.SpriteComponent(
+        sprite: boxSprite,
+        position: -boxSize / 2,
+        size: boxSize,
+      )
         ..add(
           TextComponent(
             text: number.toString(),
             textRenderer: _textRenderer,
             anchor: Anchor.center,
             position: size / 2,
-            priority: -1,
           ),
         )
         ..add(
@@ -68,7 +84,7 @@ class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
             size: Vector2(sideLength / 2, sideLength / 20),
             position: Vector2(sideLength / 2, sideLength * (3.8 / 5)),
             anchor: Anchor.center,
-            paint: Paint()..color = Colors.black38,
+            paint: Paint()..color = Colors.white60,
           ),
         ),
     );
