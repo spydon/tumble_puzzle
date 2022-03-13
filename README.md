@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://puzzle.lukas.fyi/">
-    <img alt="Tumble Puzzle" width="200px" src="./assets/images/green_box.png">
+    <img alt="Tumble Puzzle" width="200px" src="./assets/images/ball_gray.png">
   </a>
 </p>
 
