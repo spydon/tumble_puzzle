@@ -28,9 +28,3 @@ This game was created for the Flutter Puzzle Hack 2022 with the use of the
 Flame game engine and Forge2D for the physics.
 
 It can be played here https://puzzle.lukas.fyi/
-
-<p align="center">
-  <a href="https://puzzle.lukas.fyi/">
-    <img alt="Tumble Puzzle" width="80px" src="./assets/images/ball_fire.png">
-  </a>
-</p>
