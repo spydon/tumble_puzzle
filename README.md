@@ -1,8 +1,31 @@
-# TumblePuzzle
+<p align="center">
+  <a href="https://puzzle.lukas.fyi/">
+    <img alt="Tumble Puzzle" width="200px" src="./assets/images/green_box.png">
+  </a>
+</p>
 
-A normal slide puzzle.
-You are playing as a computer scientist and just like in reality the first thing you do is to break
-the frame so that you can organize the blocks as you wish, since you know that this can be done in a
-much better time complexity than tediously sliding around the blocks inside of the frame. 
+<p align="center">
+TumblePuzzle
+</p>
 
-Computer scientist: Breaking the rules to get O(n) instead of O(n²)? Totally worth it!
+You are a crazy scientist god solving a slider puzzle in space. 
+Since you are a god, some rules can be bent, it doesn't necessarily make it
+easier though...
+
+
+## Instructions
+
+Pull the blocks like in a normal slide puzzle, it sounds easy, but everything
+is affected by physics and even though you can bend the rules by clicking the
+buttons, it is not as easy as it looks.
+
+The blocks don't have to have the correct angle for you to win (they can be
+upside-down for example), as long as they go from 1 to 15 in a square.
+
+
+## About
+
+This game was created for the Flutter Puzzle Hack 2022 with the use of the
+Flame game engine and Forge2D for the physics.
+
+It can be played here https://puzzle.lukas.fyi/
