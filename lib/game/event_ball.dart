@@ -66,6 +66,9 @@ class EventBall extends BodyComponent with flame.Draggable, DraggableBody {
           ),
         ),
     );
+    body.applyLinearImpulse(
+      (Vector2.random() - Vector2.all(0.5)) * body.mass * 1000,
+    );
   }
 
   void fadeInFire() {

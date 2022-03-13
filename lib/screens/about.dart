@@ -11,7 +11,10 @@ class About extends StatelessWidget {
   static const aboutText =
       '''This game was created for the Flutter Puzzle Hack 2022.
 It uses the Flame game engine and the Forge2D
-physics engine.''';
+physics engine.
+
+The source code can be found at github.com/spydon/tumble_puzzle
+''';
 
   @override
   Widget build(BuildContext context) {
