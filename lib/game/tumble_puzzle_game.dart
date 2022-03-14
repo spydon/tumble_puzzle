@@ -50,7 +50,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     final boundaries = createBoundaries(this);
     addAll(boundaries);
 
-    final center = screenToWorld(camera.canvasSize / 2);
+    final center = screenToWorld(camera.viewport.effectiveSize / 2);
     final halfBoxLength = boxLength / 2;
     final startOffset =
         Vector2.all(boxLength * (numberOfBoxesX / 2) - halfBoxLength)..y *= -1;
@@ -69,7 +69,8 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     children.register<EventBall>();
     children.register<TimerComponent>();
     final numberOfBalls =
-        ((camera.viewport.effectiveSize.length / 1000).floor()).clamp(1, 10);
+        ((camera.viewport.effectiveSize.length / 1000).floor()).clamp(1, 10) +
+            (celebration ? 3 : 0);
     late final timer = TimerComponent(
       period: 1,
       repeat: true,

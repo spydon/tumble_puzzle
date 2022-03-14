@@ -72,7 +72,7 @@ class GameNotifier extends StateNotifier<GameState> {
   void setPlay(bool playing) {
     if (state.cinematic == playing) {
       state = state.copyWith(
-        game: _retrieveGame(cinematic: !playing),
+        game: _retrieveGame(cinematic: !playing, celebration: false),
         showInstructions: false,
         hovers: {},
       );

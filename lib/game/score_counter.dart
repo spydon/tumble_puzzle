@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 class ScoreCounter extends TextComponent {
   @override
   PositionType positionType = PositionType.viewport;
-  double score = 500;
+  double score = 1000;
 
   static final _textRenderer = TextPaint(
     style: GoogleFonts.vt323(
@@ -23,7 +23,7 @@ class ScoreCounter extends TextComponent {
 
   @override
   void update(double dt) {
-    score -= dt;
+    score = max(0, score - dt);
     final roundedScore = max(score.floor(), 0);
     text = 'Score: $roundedScore';
     if (roundedScore % 100 == 0 && children.isEmpty) {
