@@ -19,11 +19,17 @@ class Highscore extends StatelessWidget {
           'Highscore',
           style: TextStyle(color: Colors.black, fontSize: 20),
         ),
+        if (scores.isEmpty)
+          const Text(
+            'Finish the game you lazy vogon!',
+            style: TextStyle(color: Colors.black, fontSize: 16),
+          ),
         for (final score in scores)
           Text(
             score.toString(),
             style: const TextStyle(color: Colors.black, fontSize: 14),
           ),
+        const SizedBox(height: 10),
       ],
     );
   }

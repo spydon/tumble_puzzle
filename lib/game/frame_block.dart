@@ -4,6 +4,7 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 
 import 'draggable_body.dart';
 import 'number_block.dart';
+import 'tumble_puzzle_game.dart';
 
 enum Direction {
   north,
@@ -12,7 +13,8 @@ enum Direction {
   west,
 }
 
-class FrameBlock extends BodyComponent with flame.Draggable, DraggableBody {
+class FrameBlock extends BodyComponent
+    with flame.Draggable, DraggableBody {
   final Vector2 startPosition;
   final Vector2 size;
   final bool isStatic;

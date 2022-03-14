@@ -25,8 +25,6 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   late List<FrameBlock> frame;
   bool _staticFrame = false;
   ScoreCounter? scoreCounter;
-  // TODO: remove
-  bool isFinished = false;
 
   TumblePuzzleGame({
     this.cinematic = true,
@@ -87,7 +85,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       },
     );
     if (!preLoaded) {
-      await Future.delayed(const Duration(seconds: 4));
+      await Future.delayed(const Duration(seconds: 1));
     }
     add(timer);
     onLoaded?.call();

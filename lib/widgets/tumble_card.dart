@@ -32,22 +32,20 @@ class TumbleCard extends ConsumerWidget {
         : this.children;
 
     return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 400),
-        child: Card(
-          color: Colors.grey.shade200.withOpacity(0.8),
-          elevation: 5,
-          child: Container(
+      child: Wrap(
+        children: [
+          Card(
+            color: Colors.grey.shade200.withOpacity(0.8),
+            elevation: 5,
             margin: const EdgeInsets.all(20),
-            child: Wrap(
-              runAlignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              direction: Axis.vertical,
-              spacing: 10,
-              children: children,
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              child: Column(
+                children: children,
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

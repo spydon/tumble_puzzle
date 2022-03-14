@@ -41,6 +41,7 @@ The blocks don't have to have the correct angle for you to win
             instructionText,
             style: TextStyle(color: Colors.black, fontSize: 16),
           ),
+        const SizedBox(height: 10),
         ElevatedButton(
           onPressed: () {
             if (state.showInstructions) {
@@ -52,6 +53,7 @@ The blocks don't have to have the correct angle for you to win
           child: const Text('Play'),
         ),
         if (!state.showInstructions) ...[
+          const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () => controller.animateToPage(
               MenuItem.highscore.index,
@@ -60,6 +62,7 @@ The blocks don't have to have the correct angle for you to win
             ),
             child: const Text('Highscore'),
           ),
+          const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () => controller.animateToPage(
               MenuItem.about.index,
