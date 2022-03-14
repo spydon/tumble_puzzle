@@ -26,6 +26,7 @@ class LoadingScreen extends FlameGame {
       style: GoogleFonts.saira(
         fontSize: 20,
         color: Colors.grey,
+        fontWeight: FontWeight.bold,
       ),
     );
 
