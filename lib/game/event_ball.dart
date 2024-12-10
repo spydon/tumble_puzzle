@@ -1,6 +1,7 @@
 import 'package:flame/components.dart' as flame;
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/events.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +9,8 @@ import 'draggable_body.dart';
 import 'explosion.dart';
 import 'number_block.dart';
 
-class EventBall extends BodyComponent with flame.Draggable, DraggableBody {
+class EventBall extends BodyComponent
+    with DragCallbacks, ContactCallbacks, DraggableBody {
   final Vector2 startPosition;
   final Vector2 size;
   final double radius;
@@ -73,28 +75,26 @@ class EventBall extends BodyComponent with flame.Draggable, DraggableBody {
 
   void fadeInFire() {
     if (fireBall.children.isEmpty) {
-      fireBall
-        ..add(
-          OpacityEffect.fadeIn(
-            EffectController(duration: 1.0, alternate: true),
-          ),
-        );
+      fireBall.add(
+        OpacityEffect.fadeIn(
+          EffectController(duration: 1.0, alternate: true),
+        ),
+      );
     }
   }
-}
-
-class BallContact extends ContactCallback<EventBall, DraggableBody> {
-  BallContact();
 
   @override
-  void begin(EventBall ball, DraggableBody other, Contact contact) {
+  void beginContact(Object other, Contact contact) {
+    if (other is! BodyComponent) {
+      return;
+    }
     final impulse = Vector2.random() - Vector2.random();
     other.body.applyLinearImpulse(
       impulse
         ..negate()
-        ..scale(ball.body.mass * 200),
+        ..scale(body.mass * 200),
     );
-    ball.fadeInFire();
+    fadeInFire();
     if (other.children.query<ExplosionComponent>().length > 5) {
       return;
     }
@@ -102,7 +102,7 @@ class BallContact extends ContactCallback<EventBall, DraggableBody> {
       final explosionCenter = contact.manifold.localPoint;
       other.add(ExplosionComponent(explosionCenter..y *= -1));
     } else {
-      final explosionCenter = (ball.body.position - other.body.position)
+      final explosionCenter = (body.position - other.body.position)
         ..rotate(-other.angle);
       explosionCenter.x < explosionCenter.y
           ? explosionCenter.x /= 2
@@ -112,5 +112,5 @@ class BallContact extends ContactCallback<EventBall, DraggableBody> {
   }
 
   @override
-  void end(EventBall ball, DraggableBody other, Contact contact) {}
+  void endContact(Object other, Contact contact) {}
 }

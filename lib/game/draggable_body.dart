@@ -1,9 +1,9 @@
-import 'package:flame/input.dart';
+import 'package:flame/events.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 
-import 'drag_arm.dart';
-import 'explosion.dart';
+import 'package:tumble_puzzle/game/drag_arm.dart';
+import 'package:tumble_puzzle/game/explosion.dart';
 
 mixin DraggableBody on BodyComponent {
   late Body _groundBody;
@@ -22,40 +22,42 @@ mixin DraggableBody on BodyComponent {
     _groundBody = world.createBody(BodyDef());
   }
 
-  bool onDragStart(DragStartInfo info) {
+  bool onDragStart(DragStartEvent event) {
     final mouseJointDef = MouseJointDef()
       ..maxForce = 50 * body.mass
       ..dampingRatio = 0.1
       ..frequencyHz = 100
-      ..target.setFrom(info.eventPosition.game)
+      ..target.setFrom(event.localPosition)
       ..collideConnected = false
       ..bodyA = _groundBody
       ..bodyB = body;
 
-    mouseJoint ??= world.createJoint(mouseJointDef) as MouseJoint;
-    add(dragArm = DragArm(body: body, mouseJoint: mouseJoint!));
-    parent?.children.changePriority(this, 2);
-
-    return false;
-  }
-
-  bool onDragUpdate(DragUpdateInfo info) {
-    mouseJoint?.setTarget(info.eventPosition.game);
-    return false;
-  }
-
-  bool onDragEnd(_) {
-    return onDragCancel();
-  }
-
-  bool onDragCancel() {
-    remove(dragArm!);
-    parent?.children.changePriority(this, 0);
     if (mouseJoint == null) {
-      return true;
+      mouseJoint = MouseJoint(mouseJointDef);
+      world.createJoint(mouseJoint!);
+      add(dragArm = DragArm(body: body, mouseJoint: mouseJoint!));
+      priority = 2;
+    }
+
+    return false;
+  }
+
+  bool onDragUpdate(DragUpdateEvent event) {
+    mouseJoint?.setTarget(event.localEndPosition);
+    return false;
+  }
+
+  void onDragEnd(DragEndEvent event) {
+    return onDragCancel(DragCancelEvent(event.pointerId));
+  }
+
+  void onDragCancel(DragCancelEvent event) {
+    remove(dragArm!);
+    priority = 0;
+    if (mouseJoint == null) {
+      return;
     }
     world.destroyJoint(mouseJoint!);
     mouseJoint = null;
-    return true;
   }
 }

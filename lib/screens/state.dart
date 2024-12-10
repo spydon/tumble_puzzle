@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../game/tumble_puzzle_game.dart';
@@ -47,7 +49,9 @@ class GameState {
 }
 
 class GameNotifier extends StateNotifier<GameState> {
-  GameNotifier(TumblePuzzleGame game) : super(GameState(game: game));
+  GameNotifier(TumblePuzzleGame game, this.ref) : super(GameState(game: game));
+
+  final Ref ref;
 
   TumblePuzzleGame _retrieveGame({
     bool? cinematic,
@@ -65,6 +69,7 @@ class GameNotifier extends StateNotifier<GameState> {
         preLoaded: preLoaded ?? state.preLoaded,
         onFinish: setGameOver,
         onLoaded: setLoaded,
+        ref: ref,
       );
     }
   }
@@ -117,11 +122,5 @@ class GameNotifier extends StateNotifier<GameState> {
 }
 
 final gameNotifierProvider = StateNotifierProvider<GameNotifier, GameState>(
-  (ref) {
-    return GameNotifier(
-      TumblePuzzleGame(
-        onLoaded: () => ref.read(gameNotifierProvider.notifier).setLoaded(),
-      ),
-    );
-  },
+  (ref) => GameNotifier(TumblePuzzleGame(ref: ref), ref),
 );

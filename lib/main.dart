@@ -17,22 +17,22 @@ class TumblePuzzle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = ThemeData(
       textTheme: TextTheme(
-        headline1: GoogleFonts.saira(
+        displayLarge: GoogleFonts.saira(
           fontSize: 21,
           color: Colors.white,
         ),
-        button: GoogleFonts.saira(
+        labelLarge: GoogleFonts.saira(
           fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
-        bodyText2: GoogleFonts.saira(
+        bodyMedium: GoogleFonts.saira(
           fontSize: 18,
           color: Colors.white,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          primary: Colors.black,
+          backgroundColor: Colors.black,
           minimumSize: const Size(150, 50),
         ),
       ),

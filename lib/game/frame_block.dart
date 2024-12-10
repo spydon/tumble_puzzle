@@ -1,5 +1,6 @@
 import 'package:flame/components.dart' as flame;
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 import 'draggable_body.dart';
@@ -13,8 +14,7 @@ enum Direction {
   west,
 }
 
-class FrameBlock extends BodyComponent
-    with flame.Draggable, DraggableBody {
+class FrameBlock extends BodyComponent with DragCallbacks {
   final Vector2 startPosition;
   final Vector2 size;
   final bool isStatic;

@@ -1,7 +1,11 @@
+import 'package:flame/camera.dart';
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tumble_puzzle/screens/state.dart';
 
 import 'background.dart';
 import 'boundaries.dart';
@@ -11,7 +15,7 @@ import 'frame_block.dart';
 import 'number_block.dart';
 import 'score_counter.dart';
 
-class TumblePuzzleGame extends Forge2DGame with HasDraggables {
+class TumblePuzzleGame extends Forge2DGame with DragCallbacks {
   final Function(int score)? onFinish;
   final Function()? onLoaded;
   final boxLength = 8.0;
@@ -25,8 +29,10 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   late List<FrameBlock> frame;
   bool _staticFrame = false;
   ScoreCounter? scoreCounter;
+  final Ref ref;
 
   TumblePuzzleGame({
+    required this.ref,
     this.cinematic = true,
     this.celebration = false,
     this.preLoaded = false,
@@ -38,17 +44,17 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    final viewportSize = camera.canvasSize.clone();
+    final viewportSize = size.clone();
     viewportSize.x = viewportSize.x.clamp(500, double.infinity);
     viewportSize.y = viewportSize.y.clamp(800, double.infinity);
-    camera.viewport = FixedResolutionViewport(viewportSize);
+    camera.viewport = FixedResolutionViewport(resolution: viewportSize);
+    camera.viewfinder.anchor = Anchor.topLeft;
 
-    add(Background(world.gravity));
-    addContactCallback(BallContact());
+    camera.backdrop.add(Background(world.gravity));
     final boundaries = createBoundaries(this);
     addAll(boundaries);
 
-    final center = screenToWorld(camera.viewport.effectiveSize / 2);
+    final center = screenToWorld(camera.viewport.size / 2);
     final halfBoxLength = boxLength / 2;
     final startOffset =
         Vector2.all(boxLength * (numberOfBoxesX / 2) - halfBoxLength)..y *= -1;
@@ -67,7 +73,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
     children.register<EventBall>();
     children.register<TimerComponent>();
     final numberOfBalls =
-        ((camera.viewport.effectiveSize.length / 1000).floor()).clamp(1, 10) +
+        ((camera.viewport.size.length / 1000).floor()).clamp(1, 10) +
             (celebration ? 3 : 0);
     late final timer = TimerComponent(
       period: 1,
@@ -88,13 +94,15 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
       await Future.delayed(const Duration(seconds: 4));
     }
     add(timer);
-    onLoaded?.call();
+    ref.read(gameNotifierProvider.notifier).setLoaded();
   }
 
   @override
-  void onDragStart(int pointerId, DragStartInfo info) {
+  void onDragStart(DragStartEvent event) {
     if (!cinematic) {
-      super.onDragStart(pointerId, info);
+      // TODO: This doesn't work anymore since we don't go through the game
+      // mixin.
+      super.onDragStart(event);
     }
   }
 
@@ -169,11 +177,11 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
 
   void addBall({bool startBall = false}) {
     if (children.query<EventBall>().length < 10) {
-      final center = screenToWorld(camera.canvasSize / 2);
+      final center = screenToWorld(camera.viewport.size / 2);
       if (!startBall) {
         scoreCounter?.score += 50;
       }
-      add(EventBall(center.clone()..y += size.y / 4));
+      world.add(EventBall(center.clone()..y += size.y / 4));
     }
   }
 
@@ -212,7 +220,7 @@ class TumblePuzzleGame extends Forge2DGame with HasDraggables {
 
   List<FrameBlock> generateFrame({required bool static}) {
     _staticFrame = static;
-    final center = screenToWorld(camera.canvasSize / 2);
+    final center = screenToWorld(camera.viewport.size / 2);
     final halfFrameThickness = frameThickness / 2;
     const wiggleRoom = 0.2;
     final verticalSize =

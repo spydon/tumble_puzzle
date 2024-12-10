@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ScoreCounter extends TextComponent {
-  @override
-  PositionType positionType = PositionType.viewport;
   double score = 1000;
 
   static final _textRenderer = TextPaint(

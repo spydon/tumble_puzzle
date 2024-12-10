@@ -1,5 +1,6 @@
 import 'package:flame/components.dart' as flame;
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +12,7 @@ enum BlockColor {
   green,
 }
 
-class NumberBlock extends BodyComponent with flame.Draggable, DraggableBody {
+class NumberBlock extends BodyComponent with DragCallbacks, DraggableBody {
   final BlockColor color;
   final int number;
   final Vector2 startPosition;
