@@ -2,8 +2,6 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
-import 'package:flutter/animation.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 
 class LogoGame extends FlameGame with TapDetector {

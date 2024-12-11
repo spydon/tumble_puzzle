@@ -5,6 +5,7 @@ import 'package:flame/events.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 
+import 'boundaries.dart';
 import 'draggable_body.dart';
 import 'explosion.dart';
 import 'number_block.dart';
@@ -98,15 +99,8 @@ class EventBall extends BodyComponent
     if (other.children.query<ExplosionComponent>().length > 5) {
       return;
     }
-    if (other is NumberBlock) {
+    if (other is! Wall) {
       final explosionCenter = contact.manifold.localPoint;
-      other.add(ExplosionComponent(explosionCenter..y *= -1));
-    } else {
-      final explosionCenter = (body.position - other.body.position)
-        ..rotate(-other.angle);
-      explosionCenter.x < explosionCenter.y
-          ? explosionCenter.x /= 2
-          : explosionCenter.y /= 2;
       other.add(ExplosionComponent(explosionCenter..y *= -1));
     }
   }

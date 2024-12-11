@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../game/logo_game.dart';
-import '../widgets/tumble_card.dart';
-import 'state.dart';
+import 'package:tumble_puzzle/game/logo_game.dart';
+import 'package:tumble_puzzle/screens/state.dart';
+import 'package:tumble_puzzle/widgets/tumble_card.dart';
 
 enum MenuItem {
   menu,
@@ -30,6 +29,7 @@ The blocks don't have to have the correct angle for you to win
     final state = ref.read(gameNotifierProvider);
     return TumbleCard(
       controller,
+      withBackButton: false,
       children: [
         LogoGameWidget(),
         const Text(
@@ -73,7 +73,6 @@ The blocks don't have to have the correct angle for you to win
           ),
         ],
       ],
-      withBackButton: false,
     );
   }
 }

@@ -1,16 +1,17 @@
-import 'package:flame_forge2d/flame_forge2d.dart';
+import 'dart:ui';
 
-List<Wall> createBoundaries(Forge2DGame game) {
-  final topLeft = Vector2.zero();
-  final bottomRight = game.screenToWorld(game.canvasSize);
-  final topRight = Vector2(bottomRight.x, topLeft.y);
-  final bottomLeft = Vector2(topLeft.x, bottomRight.y);
+import 'package:flame/experimental.dart';
+import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:tumble_puzzle/game/tumble_puzzle_game.dart';
+
+List<Wall> createBoundaries(TumblePuzzleWorld world) {
+  final bounds = Rectangle.fromRect(world.game.camera.visibleWorldRect);
 
   return [
-    Wall(topLeft, topRight),
-    Wall(topRight, bottomRight),
-    Wall(bottomRight, bottomLeft),
-    Wall(bottomLeft, topLeft),
+    Wall(bounds.topLeft, bounds.topRight),
+    Wall(bounds.topRight, bounds.bottomRight),
+    Wall(bounds.bottomRight, bounds.bottomLeft),
+    Wall(bounds.bottomLeft, bounds.topLeft),
   ];
 }
 

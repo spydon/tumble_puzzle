@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tumble_puzzle/game/tumble_puzzle_game.dart';
 
 import '../screens/state.dart';
 import 'loading_widget.dart';
@@ -31,7 +32,8 @@ class PuzzleWidget extends ConsumerWidget {
                     backgroundColor: Colors.red.shade600,
                     label: const Text('Add a ball'),
                     isExtended: state.hovers['add-ball'] ?? false,
-                    onPressed: state.game.addBall,
+                    onPressed: () =>
+                        (state.game.world as TumblePuzzleWorld).addBall(),
                   ),
                   onTap: () {},
                   onHover: (isHovering) {
@@ -50,7 +52,8 @@ class PuzzleWidget extends ConsumerWidget {
                     backgroundColor: Colors.red.shade600,
                     label: const Text('Break the frame'),
                     isExtended: state.hovers['frame-breaker'] ?? false,
-                    onPressed: state.game.breakFrame,
+                    onPressed: () =>
+                        (state.game.world as TumblePuzzleWorld).breakFrame(),
                   ),
                   onTap: () {},
                   onHover: (isHovering) {
@@ -71,7 +74,7 @@ class PuzzleWidget extends ConsumerWidget {
                     isExtended: state.hovers['switch-gravity'] ?? false,
                     onPressed: () {
                       final gravity = state.game.world.gravity;
-                      gravity.y = gravity.isZero() ? -10 : 0;
+                      gravity.y = gravity.isZero() ? 10 : 0;
                     },
                   ),
                   onTap: () {},

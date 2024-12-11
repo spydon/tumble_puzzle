@@ -35,7 +35,7 @@ mixin DraggableBody on BodyComponent {
     if (mouseJoint == null) {
       mouseJoint = MouseJoint(mouseJointDef);
       world.createJoint(mouseJoint!);
-      add(dragArm = DragArm(body: body, mouseJoint: mouseJoint!));
+      world.add(dragArm = DragArm(body: body, mouseJoint: mouseJoint!));
       priority = 2;
     }
 
@@ -52,7 +52,7 @@ mixin DraggableBody on BodyComponent {
   }
 
   void onDragCancel(DragCancelEvent event) {
-    remove(dragArm!);
+    world.remove(dragArm!);
     priority = 0;
     if (mouseJoint == null) {
       return;
